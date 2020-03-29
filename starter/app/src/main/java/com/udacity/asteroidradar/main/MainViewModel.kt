@@ -26,7 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun fetchAsteroids() {
             withContext(Dispatchers.IO) {
-                DataHelper.getInstance(getApplication()).fetchAsteroids(SimpleDateFormat(API_QUERY_DATE_FORMAT, Locale.getDefault()).format(Date()))
+                DataHelper.getInstance(getApplication()).fetchAsteroids()
             }.also {
                 if (it.getAsteroids().isEmpty()) {
                     AppDatabase.getAppDataBase(context = getApplication())?.let { db ->

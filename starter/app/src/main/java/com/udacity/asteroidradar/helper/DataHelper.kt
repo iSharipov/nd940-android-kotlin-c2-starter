@@ -1,9 +1,11 @@
 package com.udacity.asteroidradar.helper
 
 import android.content.Context
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.AsteroidRadarApp
 import com.udacity.asteroidradar.AsteroidsWrapper
 import com.udacity.asteroidradar.BuildConfig
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.data.repository.NasaApi
@@ -12,6 +14,9 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import timber.log.Timber
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DataHelper private constructor(context: Context) {
     private var nasaApi: NasaApi = getRetrofit().create(NasaApi::class.java)
@@ -20,9 +25,9 @@ class DataHelper private constructor(context: Context) {
         private fun getRetrofit(): Retrofit = AsteroidRadarApp.instance.provideRetrofit()
     }
 
-    fun fetchAsteroids(startDate: String): AsteroidsWrapper {
+    fun fetchAsteroids(): AsteroidsWrapper {
         try {
-            parseAsteroidsJsonResult(JSONObject(nasaApi.fetchAsteroids(startDate, BuildConfig.API_KEY).execute().body()!!)).also {
+            loadAsteroids().also {
                 return AsteroidsWrapper().apply {
                     setAsteroids(it)
                 }
@@ -33,6 +38,13 @@ class DataHelper private constructor(context: Context) {
                 setAsteroids((emptyList()))
             }
         }
+    }
+
+    fun loadAsteroids(): List<Asteroid> {
+        return parseAsteroidsJsonResult(JSONObject(nasaApi.fetchAsteroids(
+            SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault()).format(
+                Date()
+            ), BuildConfig.API_KEY).execute().body()!!))
     }
 
     fun pictureOfDay(): PictureOfDay? {
