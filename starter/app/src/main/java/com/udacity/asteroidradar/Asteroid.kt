@@ -12,6 +12,7 @@ data class Asteroid(
     val id: Long,
     val codename: String,
     val closeApproachDate: String,
+    val epochDateCloseApproach: Long,
     val absoluteMagnitude: Double,
     val estimatedDiameter: Double,
     val relativeVelocity: Double,

@@ -11,6 +11,7 @@ import com.udacity.asteroidradar.repository.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -29,7 +30,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }.also {
                 if (it.getAsteroids().isEmpty()) {
                     AppDatabase.getAppDataBase(context = getApplication())?.let { db ->
-                        it.setAsteroids(db.asteroidDao().getAsteroids())
+                        val calendar = Calendar.getInstance()
+                        calendar.time = Date()
+                        calendar.add(Calendar.DATE, -1)
+                        it.setAsteroids(db.asteroidDao().getFilteredAsteroids(calendar.timeInMillis))
                     }
                 } else {
                     AppDatabase.getAppDataBase(context = getApplication())?.let { db ->

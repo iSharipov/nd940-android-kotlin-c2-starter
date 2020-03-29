@@ -26,8 +26,8 @@ class AsteroidRadarApp : Application() {
 
     fun provideRetrofit(): Retrofit {
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
-        httpClient.connectTimeout(10, SECONDS)
-        httpClient.readTimeout(10, SECONDS)
+        httpClient.connectTimeout(3, SECONDS)
+        httpClient.readTimeout(3, SECONDS)
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         httpClient.interceptors().add(logging)
