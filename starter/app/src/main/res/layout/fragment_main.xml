@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:contentDescription="@null"
+                android:contentDescription="@string/image_of_the_day"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/placeholder_picture_of_day"
                 />
@@ -44,6 +44,7 @@
                 android:layout_gravity="bottom"
                 android:background="#55010613"
                 android:padding="16dp"
+                android:contentDescription="@string/image_of_the_day"
                 android:text="@string/image_of_the_day"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
