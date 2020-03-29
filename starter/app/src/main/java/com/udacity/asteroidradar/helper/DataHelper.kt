@@ -21,9 +21,16 @@ class DataHelper private constructor(context: Context) {
     }
 
     fun fetchAsteroids(startDate: String): AsteroidsWrapper {
-        parseAsteroidsJsonResult(JSONObject(nasaApi.fetchAsteroids(startDate, BuildConfig.API_KEY).execute().body()!!)).also {
+        try {
+            parseAsteroidsJsonResult(JSONObject(nasaApi.fetchAsteroids(startDate, BuildConfig.API_KEY).execute().body()!!)).also {
+                return AsteroidsWrapper().apply {
+                    setAsteroids(it)
+                }
+            }
+        } catch (ex: IOException) {
+            Timber.e(ex, "Error while asteroids request")
             return AsteroidsWrapper().apply {
-                setAsteroids(it)
+                setAsteroids((emptyList()))
             }
         }
     }

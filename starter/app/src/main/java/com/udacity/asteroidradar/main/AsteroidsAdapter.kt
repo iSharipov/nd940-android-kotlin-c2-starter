@@ -6,11 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.databinding.AsteroidsItemCardBinding
 
-class AsteroidsAdapter(private val asteroids: List<Asteroid>) : RecyclerView.Adapter<AsteroidsAdapter.ViewHolder>() {
+class AsteroidsAdapter(private val asteroids: List<Asteroid>, private val onAsteroidClickListener: OnAsteroidClickListener) :
+    RecyclerView.Adapter<AsteroidsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         LayoutInflater.from(parent.context).also { layoutInflater ->
             AsteroidsItemCardBinding.inflate(layoutInflater).also { binding ->
+                binding.onAsteroidClickListener = onAsteroidClickListener
                 return ViewHolder(binding)
             }
         }
@@ -28,4 +30,8 @@ class AsteroidsAdapter(private val asteroids: List<Asteroid>) : RecyclerView.Ada
             asteroidsItemCardBinding.executePendingBindings()
         }
     }
+}
+
+class OnAsteroidClickListener(private val listener: (asteroid: Asteroid) -> Unit) {
+    fun onItemClicked(asteroid: Asteroid) = listener(asteroid)
 }

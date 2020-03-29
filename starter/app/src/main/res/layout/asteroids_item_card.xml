@@ -11,6 +11,11 @@
             name="asteroid"
             type="com.udacity.asteroidradar.Asteroid"
             />
+
+        <variable
+            name="onAsteroidClickListener"
+            type="com.udacity.asteroidradar.main.OnAsteroidClickListener"
+            />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -18,6 +23,7 @@
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/app_background"
         app:cardUseCompatPadding="true"
+        android:onClick="@{()-> onAsteroidClickListener.onItemClicked(asteroid)}"
         >
 
         <RelativeLayout

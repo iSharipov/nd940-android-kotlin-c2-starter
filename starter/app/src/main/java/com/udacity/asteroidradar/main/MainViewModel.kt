@@ -1,20 +1,20 @@
 package com.udacity.asteroidradar.main
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.udacity.asteroidradar.AsteroidsWrapper
 import com.udacity.asteroidradar.Constants.API_QUERY_DATE_FORMAT
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.helper.DataHelper
-import kotlinx.coroutines.CoroutineScope
+import com.udacity.asteroidradar.repository.AppDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MainViewModel(private val dataHelper: DataHelper) : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val asteroids: MutableLiveData<AsteroidsWrapper> = MutableLiveData()
     private val pictureOfDay: MutableLiveData<PictureOfDay> = MutableLiveData()
@@ -23,23 +23,30 @@ class MainViewModel(private val dataHelper: DataHelper) : ViewModel() {
 
     fun getPictureOfDay() = pictureOfDay
 
-    fun fetchAsteroids() {
-        CoroutineScope(Dispatchers.Main).launch {
+    suspend fun fetchAsteroids() {
             withContext(Dispatchers.IO) {
-                dataHelper.fetchAsteroids(SimpleDateFormat(API_QUERY_DATE_FORMAT, Locale.getDefault()).format(Date()))
+                DataHelper.getInstance(getApplication()).fetchAsteroids(SimpleDateFormat(API_QUERY_DATE_FORMAT, Locale.getDefault()).format(Date()))
             }.also {
+                if (it.getAsteroids().isEmpty()) {
+                    AppDatabase.getAppDataBase(context = getApplication())?.let { db ->
+                        it.setAsteroids(db.asteroidDao().getAsteroids())
+                    }
+                } else {
+                    AppDatabase.getAppDataBase(context = getApplication())?.let { db ->
+                        it.getAsteroids().forEach { asteroid ->
+                            db.asteroidDao().insertAsteroid(asteroid)
+                        }
+                    }
+                }
                 asteroids.value = it
             }
-        }
     }
 
-    fun fetchPictureOfDay() {
-        CoroutineScope(Dispatchers.Main).launch {
-            withContext(Dispatchers.IO) {
-                dataHelper.pictureOfDay()
+    suspend fun fetchPictureOfDay() {
+        withContext(Dispatchers.IO) {
+            DataHelper.getInstance(getApplication()).pictureOfDay()
             }.also {
                 pictureOfDay.value = it
             }
-        }
     }
 }
